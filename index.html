@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список товаров</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+        }
+        .product {
+            border-bottom: 1px solid #ddd;
+            padding: 1rem 0;
+        }
+        .product:last-child {
+            border-bottom: none;
+        }
+        .product h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        .product p {
+            margin: 0.5rem 0;
+        }
+        .product .price {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Список товаров</h1>
+    </header>
+    <div class="container">
+        <!-- Примерный список товаров -->
+        <div class="product">
+            <h2>Товар 1</h2>
+            <p>Описание товара 1. Это пример товара.</p>
+            <p class="price">Цена: 1000 RUB</p>
+        </div>
+        <div class="product">
+            <h2>Товар 2</h2>
+            <p>Описание товара 2. Это пример товара.</p>
+            <p class="price">Цена: 2000 RUB</p>
+        </div>
+        <div class="product">
+            <h2>Товар 3</h2>
+            <p>Описание товара 3. Это пример товара.</p>
+            <p class="price">Цена: 3000 RUB</p>
+        </div>
+    </div>
+</body>
+</html>
