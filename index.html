@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список товаров</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #303030; /* Более тёмный серый фон */
+            color: #dcdcdc;
+        }
+        .product {
+            border: 1px solid #333;
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        .product h3 {
+            margin: 0;
+            color: #dcdcdc;
+        }
+        .product p {
+            margin: 5px 0;
+        }
+        .buy-button {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #ff4d4d; /* Красный фон кнопки */
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(255, 77, 77, 0.6);
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            font-weight: bold;
+        }
+        .buy-button:hover {
+            background-color: #cc0000;
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(255, 77, 77, 0.8);
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 99;
+        }
+        .payment-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(30, 30, 30, 0.95);
+            border: 1px solid #333;
+            border-radius: 15px;
+            width: 350px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+        .modal-header {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #dcdcdc;
+        }
+        .modal-content {
+            margin-bottom: 20px;
+        }
+        .close-button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+        .close-button:hover {
+            background-color: #cc0000;
+        }
+        .payment-option {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 10px;
+            text-align: center;
+            background: #2a2a2a;
+            cursor: pointer;
+        }
+        .payment-option:hover {
+            background: #333;
+        }
+        .crypto-link {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .crypto-link:hover {
+            text-decoration: underline;
+        }
+        .language-button {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+        .language-button img {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="pageTitle" style="color: #dcdcdc;">Список товаров</h1>
+    <div id="products"></div>
+
+    <!-- Оверлей -->
+    <div id="overlay" class="overlay" onclick="closeModal()"></div>
+
+    <!-- Модальное окно -->
+    <div id="paymentModal" class="payment-modal">
+        <div class="modal-header" id="modalHeader">Выберите способ оплаты:</div>
+        <div class="modal-content" id="modalContent">
+            <!-- Контент изменяется в зависимости от языка -->
+        </div>
+        <button class="close-button" onclick="closeModal()">X</button>
+    </div>
+
+    <!-- Кнопка смены языка -->
+    <button class="language-button" onclick="toggleLanguage()">
+        <img src="https://img.icons8.com/ios-filled/50/ffffff/globe.png" alt="Сменить язык">
+    </button>
+
+    <script>
+        let isEnglish = false;
+        const productsData = {
+            ru: [
+                { name: "Купить все", price: "3600 RUB", description: "Все ниже перечисленные материалы за одну покупку" },
+                { name: "👧Шkoльнuцы 2ТБ", price: "2700 RUB", description: "Сборник контента 7-16 лет. Более 2ТБ" },
+                { name: "👧Шkoльнuцы 1ТБ", price: "1300 RUB", description: "Сборник контента 7-16 лет. Более 1ТБ" },
+                { name: "👧Шkoльнuцы 700ГБ", price: "950 RUB", description: "Сборник контента 7-16 лет. Более 700ГБ" },
+                { name: "👧Шkoльнuцы 500ГБ", price: "750 RUB", description: "Сборник контента 7-16 лет. Более 500ГБ" },
+                { name: "👧Шkoльнuцы 200ГБ", price: "450 RUB", description: "Сборник контента 7-16 лет. Более 200ГБ." },
+                { name: "👧Шkoльнuцы 100ГБ", price: "350 RUB", description: "Сборник контента 7-16 лет. Более 100ГБ" },
+                { name: "👧Шkoльнuцы 50ГБ", price: "250 RUB", description: "Сборник контента 7-16 лет. Более 50ГБ" },
+                { name: "👧🏾Тeмнoкoжue шкoл", price: "230 RUB", description: "Сборник контента 7-16 лет. Множество видео, фото, сoло, uнцecт" },
+                {name: "👨‍👩‍👧‍👦Инцecт", price: "300 RUB", description: "По названию тарифа, думаю понятно какой материал присутствует" },
+            ],
+            en: [
+                { name: "Buy everything", price: "36$", description: "All the materials listed below for one purchase" },
+                { name: "👧Scho0lgirls 2TB", price: "27$", description: "Collection of content for 7-16 years. More than 2TB" },
+                { name: "👧Scho0lgirls 1TB", price: "13$", description: "Collection of content for 7-16 years. More than 1TB" },
+                { name: "👧 Scho0lgirls 700GB", price: "9,5$", description: "Collection of content for 7-16 years. More than 700GB" },
+                { name: "👧Scho0lgirls 500GB", price: "7,5$", description: "Collection of content for 7-16 years. More than 500 GB" },
+                { name: "👧Scho0lgirls 200 GB", price: "4,5$", description: "Collection of content for 7-16 years. More than 200 GB" },
+                { name: "👧Scho0lgirls 100 GB", price: "3,5$", description: "Collection of content for 7-16 years. More than 100GB" },
+                { name: "👧Scho0lgirls 50GB", price: "2,5$", description: "Collection of content for 7-16 years. More than 50 GB" },
+                { name: "👧🏾Black scho0ls", price: "2,3$", description: "Collection of content for 7-16 years. Lots of videos, photos, solo, incest" },
+                {name: "👨‍👩‍👧‍👦Incеst", price: "3$", description: "By the name of the tariff, I think it's clear what kind of material is present" },
+            ]
+        };
+
+        const productsDiv = document.getElementById("products");
+
+        function renderProducts() {
+            productsDiv.innerHTML = '';
+            const products = isEnglish ? productsData.en : productsData.ru;
+            products.forEach(product => {
+                const productDiv = document.createElement("div");
+                productDiv.className = "product";
+                productDiv.innerHTML = `
+                    <h3>${product.name}</h3>
+                    <p>${product.description}</p>
+                    <p><strong>${isEnglish ? "Price" : "Цена"}:</strong> ${product.price}</p>
+                    <button class="buy-button" onclick="openModal('${product.name}')">${isEnglish ? "Buy" : "Купить"}</button>
+                `;
+                productsDiv.appendChild(productDiv);
+            });
+        }
+
+        function openModal(productName) {
+    const modalHeader = document.getElementById("modalHeader");
+    const modalContent = document.getElementById("modalContent");
+    document.getElementById("overlay").style.display = "block";
+    document.getElementById("paymentModal").style.display = "block";
+
+    if (isEnglish) {
+        modalHeader.innerText = "Choose payment method:";
+        modalContent.innerHTML = `
+            <div class="payment-option">
+                💰 Pay with crypto wallet
+                <p>
+                    TXvxaa1aeSQ5GzHkD4KzrCFvyuqNTH5HrW
+                    <button onclick="copyToClipboard('TXvxaa1aeSQ5GzHkD4KzrCFvyuqNTH5HrW')">Copy</button>
+                </p>
+                    <p>🧾 You can do it by receipt, using the '/checks' command</p>
+                <p>
+                    💸Crypto works only through <a href="https://t.me/cryptobot" class="crypto-link" target="_blank">@cryptobot</a>
+                </p>
+            </div>
+        `;
+    } else {
+        modalHeader.innerText = "Выберите способ оплаты:";
+        modalContent.innerHTML = `
+            <div class="payment-option">
+                💳 Оплатить картой
+                <p>
+                     <code id="cardDetails">2202206249306965</code>
+                    <button onclick="copyToClipboard('2202206249306965')">Скопировать</button>
+                </p>
+                <p>🏧 Банк: СберБанк 🟢</p>
+                <p>🧾 После оплаты, скиньте чек или скрин в бота.</p>
+            </div>
+            <div class="payment-option">
+                💰 Оплатить криптокошельком
+                <p>
+                    TXvxaa1aeSQ5GzHkD4KzrCFvyuqNTH5HrW
+                    <button onclick="copyToClipboard('TXvxaa1aeSQ5GzHkD4KzrCFvyuqNTH5HrW')">Скопировать</button>
+                </p>
+                  <p>🧾 Можно чеком, через команду '/checks'</p>
+                <p>
+                    💸 Криптой работает только через <a href="https://t.me/cryptobot" class="crypto-link" target="_blank">@cryptobot</a>
+                </p>
+            </div>
+        `;
+    }
+}
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        alert(`${isEnglish ? "Copied" : "Скопировано"}: ${text}`);
+    }).catch(err => {
+        console.error('Ошибка копирования: ', err);
+    });
+}
+
+
+        function closeModal() {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById("paymentModal").style.display = "none";
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+        }
+
+        function toggleLanguage() {
+            isEnglish = !isEnglish;
+
+            const pageTitle = document.getElementById("pageTitle");
+            pageTitle.innerText = isEnglish ? "List of products:" : "Список товаров:";
+
+            renderProducts();
+        }
+
+        // Initial render
+        renderProducts();
+    </script>
+</body>
+</html>
+
